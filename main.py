@@ -19,6 +19,8 @@ def validate(text: str) -> None:
         raise ValueError(f"entry text is {len(text)} chars, over the 240 limit")
     if "\n" in text or "\r" in text:
         raise ValueError("entry text must not contain a newline")
+    if text != text.strip():
+        raise ValueError("line must not have leading or trailing whitespace")
 
 
 def main() -> None:
@@ -26,6 +28,8 @@ def main() -> None:
     out_dir = Path("/output")
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "entry.txt").write_text(LINE, encoding="utf-8")
+    if (out_dir / "entry.txt").read_text(encoding="utf-8") != LINE:
+        raise ValueError("round-trip mismatch")
 
 
 if __name__ == "__main__":
